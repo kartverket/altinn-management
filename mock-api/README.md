@@ -1,6 +1,6 @@
 # mock-api
 
-A mock of Altinn, and of Maskinporten, which issues the tokens Altinn's write routes require, for running
+A mock of Altinn, of Maskinporten, which issues the tokens Altinn's write routes require, and of the filtering service (see [Filtering](#filtering)), for running
 altinn-management locally. It keeps its data in memory, so every start begins from the seed in [`resources.json`](src/main/resources/resources.json): Kartverket's three MaskinportenSchema resources in
 production, and one of another organisation's.
 
@@ -34,3 +34,30 @@ Errors look like Altinn's: ProblemDetails, sent as `application/json`.
 | `GET /authentication/api/v1/exchange/maskinporten` | Altinn's exchange of a Maskinporten token for an Altinn token. The Altinn token lasts 30 minutes and has the Maskinporten token's claims, `scope` and `consumer` among them |
 
 The mock's tokens are JWTs without a signature. Instead, the mock only accepts a token it issued itself.
+
+## Filtering
+
+`POST /filtering` plays the filtering service, which is OPA in production, in OPA's format. It takes the caller's
+`X-Forwarded-Client-Cert` header as `{"input": {"headers": {"x-forwarded-client-cert": "..."}}}`, takes the app from the
+last SPIFFE URI in it, and answers which scopes and Altinn resources that app may see:
+
+```json
+{
+  "result": {
+    "scopes": { "exact": ["kartverk:dokumentbestilling", "kartverk:nrl.rapportering"], "prefix": ["kartverk:tilgangsstyring/"] },
+    "resources": { "exact": [], "prefix": ["nrl-"] }
+  }
+}
+```
+
+Unknown apps get empty lists, and a call without a SPIFFE URI gets 400.
+
+| App (`<namespace>/<app>`) | Scopes | Resources |
+| :-- | :-- | :-- |
+| `tilgangsstyring/demo` | `kartverk:dokumentbestilling`, `kartverk:nrl.rapportering`, and those starting with `kartverk:tilgangsstyring/` | Those starting with `nrl-` |
+| `matrikkel/matrikkel-api` | `kartverk:matrikkel:brukernavn` | `kv-matrikkel-brukernavn` |
+
+```sh
+curl -X POST http://localhost:8090/filtering \
+  -d '{"input":{"headers":{"x-forwarded-client-cert":"URI=spiffe://cluster.local/ns/tilgangsstyring/sa/demo"}}}'
+```

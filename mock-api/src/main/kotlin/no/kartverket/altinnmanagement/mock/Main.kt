@@ -18,5 +18,6 @@ fun Application.module(registry: ResourceRegistry = ResourceRegistry.seeded(), t
         resourceRegistry(registry)
         maskinporten(Maskinporten(tokens))
         altinnAuthentication(tokens)
+        filtering()
     }
 }
