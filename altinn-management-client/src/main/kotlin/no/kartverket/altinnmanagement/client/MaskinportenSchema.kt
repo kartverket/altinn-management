@@ -14,6 +14,16 @@ public data class MaskinportenSchema(
     public val visible: Boolean?,
 )
 
+public data class MaskinportenSchemaContent(
+    public val scopes: List<String>,
+    public val title: MultilingualText,
+    public val description: MultilingualText,
+    public val delegationDescription: MultilingualText?,
+    public val homepage: String?,
+    public val contactPoints: List<ContactPoint>,
+    public val keywords: List<Keyword>,
+)
+
 public data class MultilingualText(
     public val en: String?,
     public val nb: String?,

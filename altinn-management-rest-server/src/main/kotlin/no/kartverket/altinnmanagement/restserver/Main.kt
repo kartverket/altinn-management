@@ -20,6 +20,7 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.openapi.describe
 import io.ktor.server.routing.openapi.hide
+import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.serialization.json.Json
@@ -27,6 +28,12 @@ import no.kartverket.altinnmanagement.client.ResourceRegistryClient
 import no.kartverket.altinnmanagement.restserver.models.MaskinportenSchema
 import org.slf4j.LoggerFactory
 import java.util.UUID
+
+internal val apiJson = Json(DefaultJson) {
+    explicitNulls = false
+    // DefaultJson is lenient, and would read 42 as the string "42"
+    isLenient = false
+}
 
 fun main() {
     val applicationConfig = loadApplicationConfig()
@@ -65,7 +72,7 @@ fun Application.module(
         filter { accessLog && (accessLogHealth || !it.request.path().startsWith("/health/")) }
     }
     install(ContentNegotiation) {
-        json(Json(DefaultJson) { explicitNulls = false })
+        json(apiJson)
         accept { _, _ -> emptyList() }
     }
     install(StatusPages) { errorResponses() }
@@ -90,5 +97,12 @@ fun Application.module(
             val schema = client.getMaskinportenSchema(id) ?: throw MaskinportenSchemaNotFoundException()
             call.respond(MaskinportenSchema.from(schema))
         }.describe(maskinportenSchemaGetOperation)
+
+        put("/api/maskinportenschemas/{id}") {
+            val id = resourceId("id", call.pathParameters["id"]!!)
+            val content = maskinportenSchemaContent(id, call.maskinportenSchemaRequest())
+            val schema = client.updateMaskinportenSchema(id, content) ?: throw MaskinportenSchemaNotFoundException()
+            call.respond(MaskinportenSchema.from(schema))
+        }.describe(maskinportenSchemaPutOperation)
     }
 }

@@ -9,6 +9,7 @@ import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.response.respondText
 import kotlinx.serialization.json.Json
 import no.kartverket.altinnmanagement.client.exception.AltinnManagementException
+import no.kartverket.altinnmanagement.client.exception.AltinnRejectedException
 import no.kartverket.altinnmanagement.restserver.models.ErrorResponse
 import no.kartverket.altinnmanagement.restserver.models.FieldError
 import no.kartverket.altinnmanagement.restserver.models.ProblemType
@@ -22,8 +23,20 @@ internal fun StatusPagesConfig.errorResponses() {
     exception<InvalidRequestException> { call, cause ->
         call.respondProblem(ProblemType.VALIDATION_ERROR, HttpStatusCode.BadRequest, errors = cause.errors)
     }
+    exception<MalformedRequestException> { call, cause ->
+        call.respondProblem(ProblemType.MALFORMED_REQUEST, HttpStatusCode.BadRequest, cause.message)
+    }
     exception<MaskinportenSchemaNotFoundException> { call, cause ->
         call.respondProblem(ProblemType.NOT_FOUND, HttpStatusCode.NotFound, cause.message)
+    }
+    exception<AltinnRejectedException> { call, cause ->
+        call.application.log.warn("Altinn rejected the resource: statusCode=${cause.statusCode}")
+        val reasons = cause.reasons.joinToString("; ")
+        call.respondProblem(
+            ProblemType.UPSTREAM_REJECTED,
+            HttpStatusCode.BadRequest,
+            if (reasons.isEmpty()) "Altinn rejected the resource" else "Altinn rejected the resource: $reasons",
+        )
     }
     exception<AltinnManagementException> { call, cause ->
         call.application.log.error("Call to Maskinporten or Altinn failed: statusCode=${cause.statusCode}", cause)

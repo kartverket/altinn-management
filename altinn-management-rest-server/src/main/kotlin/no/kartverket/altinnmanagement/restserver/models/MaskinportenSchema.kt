@@ -93,6 +93,8 @@ data class MultilingualText(
     companion object {
         fun from(text: ClientMultilingualText) = MultilingualText(en = text.en, nb = text.nb, nn = text.nn)
     }
+
+    fun toClient() = ClientMultilingualText(en = en, nb = nb, nn = nn)
 }
 
 @Serializable
@@ -121,6 +123,8 @@ data class ContactPoint(
             contactPage = contactPoint.contactPage,
         )
     }
+
+    fun toClient() = ClientContactPoint(category = category, email = email, telephone = telephone, contactPage = contactPage)
 }
 
 @Serializable
@@ -136,4 +140,6 @@ data class Keyword(
     companion object {
         fun from(keyword: ClientKeyword) = Keyword(word = keyword.word, language = keyword.language)
     }
+
+    fun toClient() = ClientKeyword(word = word, language = language)
 }

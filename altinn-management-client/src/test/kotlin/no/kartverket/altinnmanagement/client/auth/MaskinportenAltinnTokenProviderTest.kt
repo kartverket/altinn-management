@@ -50,4 +50,24 @@ class MaskinportenAltinnTokenProviderTest {
 
         assertEquals(2, sentTo(exchangePath).size)
     }
+
+    @Test
+    fun `exchanges again after Altinn refuses the token`() = runBlocking {
+        val provider = maskinportenAltinnTokenProvider(recording(sent, bothTokens()))
+
+        provider.refused(provider.accessToken())
+        provider.accessToken()
+
+        assertEquals(2, sentTo(exchangePath).size)
+    }
+
+    @Test
+    fun `keeps a newer token when an older one is refused`() = runBlocking {
+        val provider = maskinportenAltinnTokenProvider(recording(sent, bothTokens()))
+
+        provider.refused(AccessToken.of("an-older-token"))
+        provider.accessToken()
+
+        assertEquals(1, sentTo(exchangePath).size)
+    }
 }

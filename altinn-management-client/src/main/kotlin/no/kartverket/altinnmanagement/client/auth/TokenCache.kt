@@ -21,6 +21,10 @@ internal class TokenCache<T : ExpiringToken>(
         }
     }
 
+    suspend fun clear(value: String): Unit = mutex.withLock {
+        if (token?.value == value) token = null
+    }
+
     companion object {
         val DEFAULT_REFRESH_LEEWAY: Duration = Duration.ofSeconds(30)
     }
