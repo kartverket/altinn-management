@@ -24,9 +24,10 @@ import java.util.UUID
 
 internal fun mockApi(
     registry: ResourceRegistry = ResourceRegistry.seeded(),
+    lists: AccessLists = AccessLists.seeded(),
     block: suspend ApplicationTestBuilder.() -> Unit,
 ) = testApplication {
-    application { module(registry) }
+    application { module(registry, lists = lists) }
     block()
 }
 

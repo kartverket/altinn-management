@@ -1,0 +1,98 @@
+[
+  {
+    "urn": "urn:altinn:access-list:kv:erlend-kan-lage",
+    "identifier": "erlend-kan-lage",
+    "name": "Erlend-sin-liste",
+    "description": "hei jeg kan lage her",
+    "createdAt": "2026-09-22T12:18:21.97701+00:00",
+    "updatedAt": "2026-09-22T12:18:22.023466+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:etinglysing-tt02-systemleverandorer",
+    "identifier": "etinglysing-tt02-systemleverandorer",
+    "name": "etinglysing-tt02-systemleverandorer",
+    "description": "Godkjente aktører som får sende inn i etinglysing-formidlingstjenestene i TT02",
+    "createdAt": "2025-03-26T13:56:22.635888+00:00",
+    "updatedAt": "2026-10-26T13:57:59.757725+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:fleks-manual-test-list-julian",
+    "identifier": "fleks-manual-test-list-julian",
+    "name": "Fleks manual test",
+    "description": "Created by ManualCreateAccessList.",
+    "createdAt": "2026-09-09T13:00:45.548715+00:00",
+    "updatedAt": "2026-09-17T08:00:50.989999+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:internt",
+    "identifier": "internt",
+    "name": "internt",
+    "description": "",
+    "createdAt": "2025-06-20T07:04:49.15007+00:00",
+    "updatedAt": "2025-07-14T12:47:01.893314+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:ld-tilgangsstyring-test",
+    "identifier": "ld-tilgangsstyring-test",
+    "name": "LD Tilgangsstyring testliste",
+    "description": "Brukes for å teste tilganger",
+    "createdAt": "2026-06-22T13:28:36.588152+00:00",
+    "updatedAt": "2026-06-25T10:35:46.545594+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:norge-digitalt",
+    "identifier": "norge-digitalt",
+    "name": "Norge Digitalt",
+    "description": "",
+    "createdAt": "2026-07-20T10:21:51.460382+00:00",
+    "updatedAt": "2026-11-12T14:10:09.864952+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:systemleverandoerer",
+    "identifier": "systemleverandoerer",
+    "name": "systemleverandoerer",
+    "description": "Systemleverandører for elektronisk tinglysing",
+    "createdAt": "2024-09-11T09:03:13.636027+00:00",
+    "updatedAt": "2026-01-08T12:22:32.994439+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:systemleverandorer",
+    "identifier": "systemleverandorer",
+    "name": "systemleverandorer",
+    "description": "Systemleverandører for elektronisk tinglysing",
+    "createdAt": "2024-11-14T12:47:34.12011+00:00",
+    "updatedAt": "2024-11-14T12:51:13.622704+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:tilgangsstyring-demo",
+    "identifier": "tilgangsstyring-demo",
+    "name": "tilgangsstyring-demo",
+    "description": "",
+    "createdAt": "2026-03-05T17:57:20.568329+00:00",
+    "updatedAt": "2026-09-07T13:47:30.644279+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:tt02-bestilling-paa-vegne-av-andre",
+    "identifier": "tt02-bestilling-paa-vegne-av-andre",
+    "name": "tt02: Bestilling på vegne av andre",
+    "description": "",
+    "createdAt": "2025-06-30T09:44:35.06813+00:00",
+    "updatedAt": "2025-06-30T09:45:49.074551+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:tt02-dsve-testmiljo",
+    "identifier": "tt02-dsve-testmiljo",
+    "name": "tt02: DSVE testmiljo",
+    "description": "Alle virksomheter som har tilgang til DSVE-formidlingstjenesten i test",
+    "createdAt": "2025-08-22T06:37:44.736794+00:00",
+    "updatedAt": "2026-09-10T07:48:45.333922+00:00"
+  },
+  {
+    "urn": "urn:altinn:access-list:kv:tt02-intern-etinglysing-devtest",
+    "identifier": "tt02-intern-etinglysing-devtest",
+    "name": "tt02: intern etinglysing devtest",
+    "description": "",
+    "createdAt": "2026-01-08T12:23:20.612728+00:00",
+    "updatedAt": "2026-01-08T12:23:53.400372+00:00"
+  }
+]

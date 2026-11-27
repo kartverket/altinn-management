@@ -134,10 +134,7 @@ private suspend fun RoutingContext.writePolicy(registry: ResourceRegistry, token
 
 /** Answers 401 or 403, and returns null, unless the call has an Altinn token the mock issued, with a scope to write. */
 private suspend fun ApplicationCall.writer(tokens: Tokens): JsonObject? {
-    val token = request.headers[HttpHeaders.Authorization]
-        ?.takeIf { it.startsWith("Bearer ", ignoreCase = true) }
-        ?.substring("Bearer ".length)?.trim()
-    val claims = token?.let(tokens::altinnClaims)
+    val claims = bearerClaims(tokens)
     if (claims == null) {
         respond(HttpStatusCode.Unauthorized)
         return null
@@ -149,6 +146,12 @@ private suspend fun ApplicationCall.writer(tokens: Tokens): JsonObject? {
     }
     return claims
 }
+
+/** The claims of the Altinn token in the request, or null when it has none the mock issued. */
+internal fun ApplicationCall.bearerClaims(tokens: Tokens): JsonObject? = request.headers[HttpHeaders.Authorization]
+    ?.takeIf { it.startsWith("Bearer ", ignoreCase = true) }
+    ?.substring("Bearer ".length)?.trim()
+    ?.let(tokens::altinnClaims)
 
 /** The resource in the request as Altinn would keep it, or null after answering 415 or 400 when Altinn could not read it. */
 private suspend fun ApplicationCall.receiveResource(): JsonObject? {
@@ -262,12 +265,12 @@ private fun ApplicationCall.query(name: String): String? = request.queryParamete
 
 private fun JsonObject.owner() = this["hasCompetentAuthority"]?.jsonObject?.text("organization")
 
-private fun JsonObject.scopes() = text("scope")?.split(' ').orEmpty()
+internal fun JsonObject.scopes() = text("scope")?.split(' ').orEmpty()
 
 private fun JsonObject.text(field: String) = (this[field] as? JsonPrimitive)?.contentOrNull
 
 // Altinn's ASP.NET answers its errors as ProblemDetails, but sends them as application/json like everything else
-private suspend fun ApplicationCall.notFound() = problem(HttpStatusCode.NotFound, "https://tools.ietf.org/html/rfc9110#section-15.5.5", "Not Found")
+internal suspend fun ApplicationCall.notFound() = problem(HttpStatusCode.NotFound, "https://tools.ietf.org/html/rfc9110#section-15.5.5", "Not Found")
 
 private suspend fun ApplicationCall.unsupportedMediaType() =
     problem(HttpStatusCode.UnsupportedMediaType, "https://tools.ietf.org/html/rfc9110#section-15.5.16", "Unsupported Media Type")
@@ -282,7 +285,7 @@ private suspend fun ApplicationCall.problem(status: HttpStatusCode, type: String
     },
 )
 
-private suspend fun ApplicationCall.validationProblem(errors: Map<String, List<String>>) = respondJson(
+internal suspend fun ApplicationCall.validationProblem(errors: Map<String, List<String>>) = respondJson(
     HttpStatusCode.BadRequest,
     buildJsonObject {
         put("type", "https://tools.ietf.org/html/rfc9110#section-15.5.1")

@@ -3,7 +3,9 @@
 A mock of Altinn, of Maskinporten, which issues the tokens Altinn's write routes require, and of the filtering service,
 for running altinn-management locally. It keeps its data in memory, so every start begins from the seed in [`resources.json`](src/main/resources/resources.json): Kartverket's three MaskinportenSchema resources in
 production, one of another organisation's, and Kartverket's GenericAccessResource `kv-geonorge` in TT02, with its policy
-from [`policies`](src/main/resources/policies).
+from [`policies`](src/main/resources/policies). Kartverket's 12 access lists in TT02, as
+Altinn gave them on 26.11.2026, come from [`access-lists.json`](src/main/resources/access-lists.json). None of them
+starts with `nrl-`, so with filtering on, the server lists none.
 
 It copies Altinn's behaviour from Altinn's source code in
 [Altinn/altinn-auth](https://github.com/Altinn/altinn-auth/tree/main/src/apps/Altinn.ResourceRegistry), not from the
@@ -29,6 +31,16 @@ token from the exchange under [Tokens](#tokens), with the scope `altinn:resource
 | `PUT /resourceregistry/api/v1/resource/{id}` | Adds a new version that replaces the whole resource, and answers 200 with no body. It checks like a POST, but only the owner in the body, not the one the mock has |
 | `POST` or `PUT /resourceregistry/api/v1/resource/{id}/policy` | Checks the XACML policy in the multipart field `policyFile`: every rule must be about the resource. It checks the owner the mock has, keeps the file as it was sent in place of the one before, and answers 201 with no body |
 | `GET /resourceregistry/api/v1/resource/{id}/policy` | The policy as it was sent, as `text/xml`. Without the resource or a policy it answers 404 as plain text: "Unable to find resource" or "Unable to find requested policy" |
+
+It also answers Altinn's two read routes for access lists the way Altinn does. Unlike resources, they need an Altinn
+token with `altinn:resourceregistry/accesslist.read`, `accesslist.write`, `pdp:accesslist.read` or `resource.admin`,
+and the mock's tokens are all Kartverket's, so the owner must be `kv` in any case. Another owner is 403, unless the
+token has `pdp:accesslist.read` or `resource.admin`.
+
+| Route | Like in Altinn |
+| :-- | :-- |
+| `GET /resourceregistry/api/v1/access-lists/{owner}` | 20 lists at a time, by identifier, as `{"links":{"next":…},"data":[…]}`. `next` is an absolute URL with `?token=`, the identifier the next page starts at as a JSON string in base64url, and is left out on the last page. A token that is not one is 400 |
+| `GET /resourceregistry/api/v1/access-lists/{owner}/{identifier}` | The list. The identifier must match exactly, and a list the mock does not have is 404 |
 
 Errors look like Altinn's: ProblemDetails sent as `application/json`, or a JSON string. A missing or unknown token gives
 401 and a token without access gives 403, both without a body.

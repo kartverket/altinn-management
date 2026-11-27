@@ -12,10 +12,15 @@ fun main() {
     embeddedServer(Netty, port = 8090) { module() }.start(wait = true)
 }
 
-fun Application.module(registry: ResourceRegistry = ResourceRegistry.seeded(), tokens: Tokens = Tokens()) {
+fun Application.module(
+    registry: ResourceRegistry = ResourceRegistry.seeded(),
+    tokens: Tokens = Tokens(),
+    lists: AccessLists = AccessLists.seeded(),
+) {
     routing {
         get("/health/live") { call.respond(HttpStatusCode.OK) }
         resourceRegistry(registry, tokens)
+        accessLists(lists, tokens)
         maskinporten(Maskinporten(tokens))
         altinnAuthentication(tokens)
         filtering()
